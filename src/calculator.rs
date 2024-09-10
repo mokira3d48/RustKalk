@@ -21,6 +21,7 @@ pub enum Error {
   MismatchedParens,
 }
 
+
 impl Calculator {
   pub fn parse<T: AsRef<str>>(expr: T) -> Result<Vec<Token>, Error> {
     let expr = expr.as_ref();
@@ -117,8 +118,40 @@ impl Calculator {
     tokens.reverse();
     let mut stack: Vec<f32> = Vec::new();
     while let Some(token) = tokens.pop() {
-      // 00:16:29
+      match token {
+        Token::Number(num) => stack.push(num as f32),
+        Token::Op(Operator::Add) => {
+          // FIXME: It's deprecated to use unwrap() function.
+          let right = stack.pop().unwrap();
+          let left = stack.pop().unwrap();
+          stack.push(left + right);
+        },
+        Token::Op(Operator::Sub) => {
+          // FIXME: It's deprecated to use unwrap() function.
+          let right = stack.pop().unwrap();
+          let left = stack.pop().unwrap();
+          stack.push(left - right);
+        },
+        Token::Op(Operator::Mul) => {
+          // FIXME: It's deprecated to use unwrap() function.
+          let right = stack.pop().unwrap();
+          let left = stack.pop().unwrap();
+          stack.push(left * right);
+        },
+        Token::Op(Operator::Div) => {
+          // FIXME: It's deprecated to use unwrap() function.
+          let right = stack.pop().unwrap();
+          let left = stack.pop().unwrap();
+          stack.push(left / right);
+        },
+        _ => {}  // Nothing else
+      }
     }
-    Some(0.0)
+
+    if stack.len() == 1 {
+      stack.pop()
+    } else {
+      None
+    }
   }
 }
